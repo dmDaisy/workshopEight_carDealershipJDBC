@@ -50,7 +50,7 @@ public class SalesContract extends Contract{
 
     @Override
     public String toCsvEntry() {
-        return "SALE|" + String.format(
+        return  String.format(
                 "%s|%.2f|%.2f|%.2f|%.2f|%s|%.2f",
                 super.toCsvEntry(),
                 getSalesTaxAmount(),

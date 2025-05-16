@@ -16,7 +16,8 @@ public class ContractDataManager {
         inventory.add(contract);
         try {
             BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(FILE_NAME, true));
-            String csvEntry = contract.toCsvEntry();
+            String prefix = (contract instanceof SalesContract) ? "SALE" : "LEASE";
+            String csvEntry = prefix + "|" + contract.toCsvEntry();
             bufferedWriter.write(csvEntry);
             bufferedWriter.newLine();
             bufferedWriter.close();

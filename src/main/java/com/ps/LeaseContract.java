@@ -40,7 +40,7 @@ public class LeaseContract extends Contract{
 
     @Override
     public String toCsvEntry() {
-        return "LEASE|" + String.format(
+        return  String.format(
                 "%s|%.2f|%.2f|%.2f|%.2f",
                 super.toCsvEntry(),
                 getExpectedEndingValue(),
