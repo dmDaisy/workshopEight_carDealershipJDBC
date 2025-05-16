@@ -2,24 +2,31 @@
 
 ## Overview
 
+Update(2025-05-16): Users can choose to buy or lease a vehicle and contracts are automatically created and saved to a CSV file.
+
 This is a simple CLI java application for managing cars for dealers, each entry records their values of VIN, year, make, model, type, color, mileage and price.
 All enties are read from a saved to a CSV file when the dealer runs and exits the program. The built-in CSV file has existing entries for testing purpose.
-The application supports several features, users can modify the car list, or search/filter by specific property values. 
+The application supports several features, users can modify the car list, or search/filter by specific property values.
 
 ## Features
 
+- **Buy/Lease vehicle**: With the following user info recorded:
+    - Date
+    - Name
+    - Email
+    - Payment info
 - **Search/Filter**: View and filter vehicles in the following ways:
-  - Price
-  - Make/model
-  - Year
-  - Color
-  - Mileage
-  - Type
-  - Display all
+    - Price
+    - Make/model
+    - Year
+    - Color
+    - Mileage
+    - Type
+    - Display all
 - **Modify**: change the vehicle list in the following ways:
-  - Add
-  - Remove
-- **Auto save**: When exiting the program.
+    - Add
+    - Remove
+- **Auto save added or removed vehicle(s)**: When exiting the program.
 
 ## Requirements
 
@@ -30,8 +37,8 @@ The application supports several features, users can modify the car list, or sea
 1. Clone this repository to your local machine.
 
     ```bash
-    git clone https://github.com/dmDaisy/workshopFour_carDealership
-    cd workshopFour_carDealership
+    git clone https://github.com/dmDaisy/workshopFive_carDealershipOOP
+    cd workshopFive_carDealershipOOP
     ```
 
 2. Compile the Java files.
@@ -49,6 +56,10 @@ The application supports several features, users can modify the car list, or sea
 ## Screenshots
 
 Below are a few screenshots of the application in action:
+
+### Buy vehicle
+
+![Screenshot 2025-05-16 at 6 43 09 PM](https://github.com/user-attachments/assets/6e48fe29-d098-4ebf-8264-55c660f0a9b7)
 
 ### Home Screen
 
@@ -77,19 +88,20 @@ Below are a few screenshots of the application in action:
 
 
 ### Interesting Piece of Code
-**Foolproof design to get user int input**: Instaed of throwing an exception and crashing the program, the invalid input can be handled gracefully. 
-For example, the `getUserInt()` helper method shown below prints an error message and prompts the user to try again until getting a valid int.
-Besides, it's also reponsible for consuming the redundant "\n" after `scanner.nextInt()` is called, which is a common issue to be handled when scanning number input.
+**Utilizing super to write fewer lines of code and increase readibility**: When generating CSV entry for `SalesContract` objects, call `super.toCsvEntry()`
+to utilize already-defined method in the parent class to write fewer lines of code and enhance reusability, this is especially helpful for classes with many data fields.
 
 ```java
-    // helper method to get user int input and consumes redundant \n
-    private int getUserInt(){
-        while( ! scanner.hasNextInt()){
-            System.out.println("Invalid input, enter an integer: ");
-            scanner.nextLine(); // scanner.next()?
-        }
-        int result = scanner.nextInt();
-        scanner.nextLine(); // consumes redundant \n
-
-        return result;
+    @Override
+    public String toCsvEntry() {
+        return  String.format(
+                "%s|%.2f|%.2f|%.2f|%.2f|%s|%.2f",
+                super.toCsvEntry(),
+                getSalesTaxAmount(),
+                getRecordingFee(),
+                getProcessingFee(),
+                getTotalPrice(),
+                isFinanced() ? "YES" : "NO",
+                getMonthlyPayment()
+        );
     }
