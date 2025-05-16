@@ -87,7 +87,7 @@ public class Vehicle {
 
     @Override
     public String toString() {
-        return String.format("%d,%d,%s,%s,%s,%s,%d,%f\n",
+        return String.format("%d,%d,%s,%s,%s,%s,%d,%.2f\n",
                 this.vin,
                 this.year,
                 this.make,
@@ -96,6 +96,19 @@ public class Vehicle {
                 this.color,
                 this.odometer,
                 this.price
+        );
+    }
+
+    public String toCsvEntry(){
+        return String.format("%d|%d|%s|%s|%s|%s|%d|%.2f\n",
+                vin,
+                year,
+                make,
+                model,
+                vehicleType,
+                color,
+                odometer,
+                price
         );
     }
 }

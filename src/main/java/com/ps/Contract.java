@@ -10,13 +10,11 @@ public abstract class Contract {
     private double totalPrice;
     private double monthlyPayment;
 
-    public Contract(LocalDate date, String customerName, String customerEmail, Vehicle vehicleSold, double price, double monthlyPayment) {
+    public Contract(LocalDate date, String customerName, String customerEmail, Vehicle vehicleSold) {
         this.date = date;
         this.customerName = customerName;
         this.customerEmail = customerEmail;
         this.vehicleSold = vehicleSold;
-        this.totalPrice = price;
-        this.monthlyPayment = monthlyPayment;
     }
 
     @Override
@@ -73,5 +71,16 @@ public abstract class Contract {
 
     public void setMonthlyPayment(double monthlyPayment){
         this.monthlyPayment = monthlyPayment;
+    }
+
+    public String toCsvEntry(){
+        String firstPart = String.format("%s|%s|%s|%.2f|",
+            date.toString(),
+            customerName,
+            customerEmail,
+            totalPrice
+        );
+        String secondPart = vehicleSold.toCsvEntry();
+        return firstPart + secondPart;
     }
 }

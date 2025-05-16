@@ -3,27 +3,49 @@ package com.ps;
 import java.time.LocalDate;
 
 public class SalesContract extends Contract{
-    private final double salesTaxAmount = 0.05;
-    private final double recordingFee = 100;
+    private  double salesTaxAmount;
+    private double recordingFee;
     private double processingFee;
-    private boolean doFinance;
+    private boolean financed;
 
-    public SalesContract(LocalDate date, String customerName, String customerEmail, Vehicle vehicleSold, double totalPrice, double monthlyPayment, boolean doFinance) {
-        super(date, customerName, customerEmail, vehicleSold, totalPrice, monthlyPayment);
-        processingFee = this.getTotalPrice() >= 10000 ? 495 : 295;
-        this.doFinance = doFinance;
+    private final double PRICE_LIMIT = 10000;
+
+    public SalesContract(LocalDate date, String customerName, String customerEmail, Vehicle vehicleSold, boolean financed) {
+        super(date, customerName, customerEmail, vehicleSold);
+        double basePrice = getVehicleSold().getPrice();
+        salesTaxAmount = basePrice * 0.05;
+        recordingFee = 100;
+        processingFee = basePrice >= PRICE_LIMIT ? 495 : 295;
+        this.financed = financed;
+        setTotalPrice(getTotalPrice());
+        if(financed)
+            setMonthlyPayment(getMonthlyPayment());
+        else
+            setMonthlyPayment(0);
     }
 
     @Override
-    public double getTotalPrice() {
-        return 0;
+    public double getTotalPrice(){
+        double basePrice = getVehicleSold().getPrice();
+        return basePrice + getSalesTaxAmount() + getRecordingFee() + getProcessingFee();
     }
+
 
     @Override
     public double getMonthlyPayment() {
-        if(!doFinance)
+        if(!financed)
             return 0;
-        return 0;
+        else{
+            double totalPrice = getTotalPrice();
+            int totalMonths = totalPrice >= PRICE_LIMIT ? 48 : 24;
+            double rate = totalPrice >= PRICE_LIMIT ? 0.0425 : 0.0525;
+            return totalPrice * rate;
+        }
+    }
+
+    @Override
+    public String toCsvEntry() {
+        return "";
     }
 
     public double getSalesTaxAmount() {
@@ -42,11 +64,11 @@ public class SalesContract extends Contract{
         this.processingFee = processingFee;
     }
 
-    public boolean isDoFinance() {
-        return doFinance;
+    public boolean isfinanced() {
+        return financed;
     }
 
-    public void setDoFinance(boolean doFinance) {
-        this.doFinance = doFinance;
+    public void setfinanced(boolean financed) {
+        this.financed = financed;
     }
 }

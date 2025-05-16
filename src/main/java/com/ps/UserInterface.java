@@ -1,5 +1,6 @@
 package com.ps;
 
+import java.time.LocalDate;
 import java.util.*;
 
 public class UserInterface {
@@ -169,8 +170,43 @@ public class UserInterface {
     }
 
     public void processBuyOrLeaseRequest(){
+        System.out.println("Enter VIN of the vehicle you want to buy or lease: ");
+        int vin = getUserInt();
+        Vehicle vehicleSelected = dealership.vehicleByVin(vin);
+        if(vehicleSelected == null){
+            System.out.println("Invalid VIN, car not found. Going back to main menu...");
+            return;
+        }
+        System.out.println("Enter 1 to buy, enter 2 to lease: ");
+        int choice = getUserInt();
+        if(choice != 1 && choice != 2){
+            System.out.println("Invalid choice, going back to main menu...");
+            return;
+        }
+        LocalDate date = LocalDate.now();
+        System.out.println("Enter your name: ");
+        String name = scanner.nextLine();
+        System.out.println("Enter your email: ");
+        String email = scanner.nextLine();
+
+        if(choice == 1){ // sales contract
+            boolean financed = false;
+            System.out.println("Do you want to pay by month? (Reply Y to confirm)");
+            String s = scanner.nextLine().trim().toUpperCase();
+            if(s.equalsIgnoreCase("Y"))
+                financed = true;
+            SalesContract salesContract = new SalesContract(date, name, email, vehicleSelected, financed);
+            ContractDataManager.saveContract(salesContract);
+            dealership.removeVehicle(vehicleSelected);
+        }
+        else if(choice == 2){ // lease contract
+            LeaseContract leaseContract = new LeaseContract(date, name, email, vehicleSelected);
+            ContractDataManager.saveContract(leaseContract);
+            dealership.removeVehicle(vehicleSelected);
+        }
     }
 
+    // helper method
     public static void displayVehicles(ArrayList<Vehicle> vehicles, String type){
         System.out.println("\nPrinting the corresponding vehicle(s) by: " + type + "\n");
         for(Vehicle vehicle: vehicles){
