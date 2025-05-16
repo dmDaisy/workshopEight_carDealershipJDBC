@@ -29,6 +29,7 @@ public class UserInterface {
             System.out.println("7. Get all");
             System.out.println("8. Add vehicle");
             System.out.println("9. Remove vehicle");
+            System.out.println("10. Buy/Lease a vehicle");
             System.out.println("0. Exit");
 
             System.out.print("Command: ");
@@ -61,6 +62,9 @@ public class UserInterface {
                     break;
                 case 9:
                     processRemoveVehicleRequest();
+                    break;
+                case 10:
+                    processBuyOrLeaseRequest();
                     break;
                 case 0:
                     System.out.println("Saving inventory to cvs file...");
@@ -162,7 +166,9 @@ public class UserInterface {
         int vin = getUserInt();
         System.out.println("The following vehicle is removed: ");
         dealership.removeVehicle(vin);
+    }
 
+    public void processBuyOrLeaseRequest(){
     }
 
     public static void displayVehicles(ArrayList<Vehicle> vehicles, String type){
