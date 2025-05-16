@@ -87,20 +87,18 @@ public class Vehicle {
 
     @Override
     public String toString() {
-        return String.format("%d,%d,%s,%s,%s,%s,%d,%.2f\n",
-                this.vin,
-                this.year,
-                this.make,
-                this.model,
-                this.vehicleType,
-                this.color,
-                this.odometer,
-                this.price
-        );
+        return  "vin: " + vin +
+                " | year: " + year +
+                " | make: " + make +
+                " | model: " + model +
+                " | type: " + vehicleType +
+                " | color: " + color +
+                " | odometer: " + odometer +
+                " | price: " + String.format("%.2f", price);
     }
 
     public String toCsvEntry(){
-        return String.format("%d|%d|%s|%s|%s|%s|%d|%.2f\n",
+        return String.format("%d|%d|%s|%s|%s|%s|%d|%.2f",
                 vin,
                 year,
                 make,

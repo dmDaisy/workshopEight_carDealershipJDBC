@@ -183,34 +183,39 @@ public class UserInterface {
             System.out.println("Invalid choice, going back to main menu...");
             return;
         }
+
         LocalDate date = LocalDate.now();
+        if(choice == 2 && (date.getYear() - vehicleSelected.getYear()) >= 3){ // no cars older than 3 years
+            System.out.println("Cannot lease cars over 3 years old. Going back to home page...");
+            return;
+        }
         System.out.println("Enter your name: ");
         String name = scanner.nextLine();
         System.out.println("Enter your email: ");
         String email = scanner.nextLine();
 
+        Contract contract = null;
         if(choice == 1){ // sales contract
             boolean financed = false;
             System.out.println("Do you want to pay by month? (Reply Y to confirm)");
             String s = scanner.nextLine().trim().toUpperCase();
             if(s.equalsIgnoreCase("Y"))
                 financed = true;
-            SalesContract salesContract = new SalesContract(date, name, email, vehicleSelected, financed);
-            ContractDataManager.saveContract(salesContract);
-            dealership.removeVehicle(vehicleSelected);
+            contract = new SalesContract(date, name, email, vehicleSelected, financed);
         }
-        else if(choice == 2){ // lease contract
-            LeaseContract leaseContract = new LeaseContract(date, name, email, vehicleSelected);
-            ContractDataManager.saveContract(leaseContract);
-            dealership.removeVehicle(vehicleSelected);
-        }
+        else if(choice == 2) // lease contract
+            contract = new LeaseContract(date, name, email, vehicleSelected);
+
+        ContractDataManager.saveContract(contract);
+        System.out.println("The following contract is saved: \n" + contract);
+        dealership.removeVehicle(vehicleSelected);
     }
 
     // helper method
     public static void displayVehicles(ArrayList<Vehicle> vehicles, String type){
-        System.out.println("\nPrinting the corresponding vehicle(s) by: " + type + "\n");
+        System.out.println("\nPrinting the corresponding vehicle(s) by: " + type);
         for(Vehicle vehicle: vehicles){
-            System.out.print(vehicle);
+            System.out.println(vehicle);
         }
     }
 

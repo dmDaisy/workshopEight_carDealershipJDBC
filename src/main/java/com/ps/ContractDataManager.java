@@ -11,11 +11,14 @@ public class ContractDataManager {
 
     // save contract to both local inventory and csv file
     public static void saveContract(Contract contract){
+        if(contract == null)
+            return;
         inventory.add(contract);
         try {
             BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(FILE_NAME, true));
             String csvEntry = contract.toCsvEntry();
             bufferedWriter.write(csvEntry);
+            bufferedWriter.newLine();
             bufferedWriter.close();
         } catch (IOException e) {
             throw new RuntimeException(e);

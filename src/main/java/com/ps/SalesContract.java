@@ -38,14 +38,39 @@ public class SalesContract extends Contract{
         else{
             double totalPrice = getTotalPrice();
             int totalMonths = totalPrice >= PRICE_LIMIT ? 48 : 24;
-            double rate = totalPrice >= PRICE_LIMIT ? 0.0425 : 0.0525;
-            return totalPrice * rate;
+            double apr = totalPrice >= PRICE_LIMIT ? 0.0425 : 0.0525;
+            double mpr = apr / 12;
+
+            // loan formula:
+            // M = P * r / (1 - (1 + r)^-n)
+            double result = (totalPrice * mpr) / (1 - Math.pow(1 + mpr, -totalMonths));
+            return result;
         }
     }
 
     @Override
     public String toCsvEntry() {
-        return "";
+        return "SALE|" + String.format(
+                "%s|%.2f|%.2f|%.2f|%.2f|%s|%.2f",
+                super.toCsvEntry(),
+                getSalesTaxAmount(),
+                getRecordingFee(),
+                getProcessingFee(),
+                getTotalPrice(),
+                isFinanced() ? "YES" : "NO",
+                getMonthlyPayment()
+        );
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() +
+                " | salesTax: " + String.format("%.2f", salesTaxAmount) +
+                " | recordingFee: " + String.format("%.2f", recordingFee) +
+                " | processingFee: " + String.format("%.2f", processingFee) +
+                " | totalPrice: " + String.format("%.2f", getTotalPrice()) +
+                " | financed: " + (financed ? "YES" : "NO") +
+                " | monthlyPayment: " + String.format("%.2f", getMonthlyPayment());
     }
 
     public double getSalesTaxAmount() {
@@ -64,7 +89,7 @@ public class SalesContract extends Contract{
         this.processingFee = processingFee;
     }
 
-    public boolean isfinanced() {
+    public boolean isFinanced() {
         return financed;
     }
 

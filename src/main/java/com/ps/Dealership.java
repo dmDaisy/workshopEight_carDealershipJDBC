@@ -99,11 +99,9 @@ public class Dealership {
     }
 
     public void removeVehicle(Vehicle vehicle){
-        inventory.remove(vehicle);
+        if( ! inventory.remove(vehicle))
+            System.out.println("Error removing vehicle: vehicle not removed. ");
     }
-
-
-
 
     public String getName() {
         return name;

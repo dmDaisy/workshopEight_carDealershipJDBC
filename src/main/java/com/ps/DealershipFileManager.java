@@ -65,6 +65,7 @@ public class DealershipFileManager {
             for(Vehicle vehicle: vehicles){
                 String vehicleLine = vehicle.toCsvEntry();
                 bufferedWriter.write(vehicleLine);
+                bufferedWriter.newLine(); // caution: write a new line
             }
 
             bufferedWriter.close();

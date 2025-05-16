@@ -19,14 +19,12 @@ public abstract class Contract {
 
     @Override
     public String toString() {
-        return "Contract{" +
-                "date=" + date +
-                ", customerName='" + customerName + '\'' +
-                ", customerEmail='" + customerEmail + '\'' +
-                ", vehicleSold=" + vehicleSold +
-                ", price=" + totalPrice +
-                ", monthlyPayment=" + monthlyPayment +
-                '}';
+        return "date: " + date +
+                " | customerName: " + customerName +
+                " | customerEmail: " + customerEmail +
+                " | totalPrice: " + String.format("%.2f", getTotalPrice()) +
+                " | monthlyPayment: " + String.format("%.2f", getMonthlyPayment()) +
+                " | vehicle: " + vehicleSold;
     }
 
     public LocalDate getDate() {
@@ -73,14 +71,13 @@ public abstract class Contract {
         this.monthlyPayment = monthlyPayment;
     }
 
-    public String toCsvEntry(){
-        String firstPart = String.format("%s|%s|%s|%.2f|",
-            date.toString(),
-            customerName,
-            customerEmail,
-            totalPrice
+    protected String toCsvEntry() {
+        return String.format(
+                "%s|%s|%s|%s",
+                date.toString(),
+                customerName,
+                customerEmail,
+                vehicleSold.toCsvEntry()
         );
-        String secondPart = vehicleSold.toCsvEntry();
-        return firstPart + secondPart;
     }
 }

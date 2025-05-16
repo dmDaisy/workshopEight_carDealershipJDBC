@@ -17,12 +17,46 @@ public class LeaseContract extends Contract{
 
     @Override
     public double getTotalPrice() {
-        return 0;
+        double basePrice = getVehicleSold().getPrice();
+        double expectedEndingValue = basePrice * 0.5;
+        double leaseFee = basePrice * 0.07;
+
+        return leaseFee + expectedEndingValue;
     }
 
     @Override
     public double getMonthlyPayment() {
-        return 0;
+        double totalPrice = getTotalPrice();
+        double apr = 0.04;
+        double mpr = apr / 12;
+        int totalMonths = 36;
+
+        // loan formula:
+        // M = P * r / (1 - (1 + r)^-n)
+        double result = (totalPrice * mpr) / (1 - Math.pow(1 + mpr, -totalMonths));
+
+        return result;
+    }
+
+    @Override
+    public String toCsvEntry() {
+        return "LEASE|" + String.format(
+                "%s|%.2f|%.2f|%.2f|%.2f",
+                super.toCsvEntry(),
+                getExpectedEndingValue(),
+                getLeaseFee(),
+                getTotalPrice(),
+                getMonthlyPayment()
+        );
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() +
+                " | expectedEndingValue: " + String.format("%.2f", expectedEndingValue) +
+                " | leaseFee: " + String.format("%.2f", leaseFee) +
+                " | totalPrice: " + String.format("%.2f", getTotalPrice()) +
+                " | monthlyPayment: " + String.format("%.2f", getMonthlyPayment());
     }
 
     public double getExpectedEndingValue() {
