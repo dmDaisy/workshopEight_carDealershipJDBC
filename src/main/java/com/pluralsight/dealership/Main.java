@@ -15,11 +15,9 @@ public class Main {
         String password = args[1];
 
         BasicDataSource basicDataSource = new BasicDataSource();
-
         basicDataSource.setUrl("jdbc:mysql://localhost:3306/car_dealership");
-
-        basicDataSource.setUsername(username);
-        basicDataSource.setPassword(password);
+        basicDataSource.setUsername("root");
+        basicDataSource.setPassword("123");
 
         UserInterface userInterface = new UserInterface(basicDataSource);
         userInterface.display();
