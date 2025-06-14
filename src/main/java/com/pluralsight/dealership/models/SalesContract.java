@@ -1,8 +1,8 @@
-package com.pluralsight.dealership;
+package com.pluralsight.dealership.models;
 
 import java.time.LocalDate;
 
-public class SalesContract extends Contract{
+public class SalesContract extends Contract {
     private  double salesTaxAmount;
     private double recordingFee;
     private double processingFee;

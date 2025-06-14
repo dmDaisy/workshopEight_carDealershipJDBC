@@ -1,4 +1,10 @@
-package com.pluralsight.dealership;
+package com.pluralsight.dealership.view;
+
+import com.pluralsight.dealership.models.Contract;
+import com.pluralsight.dealership.models.Dealership;
+import com.pluralsight.dealership.models.LeaseContract;
+import com.pluralsight.dealership.models.SalesContract;
+import com.pluralsight.dealership.models.Vehicle;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -8,7 +14,7 @@ public class UserInterface {
     private final Scanner scanner = new Scanner(System.in);
 
     private void init(){
-        dealership = DealershipFileManager.getDealership();
+        // connect to database
     }
 
     public UserInterface(){
@@ -69,7 +75,7 @@ public class UserInterface {
                     break;
                 case 0:
                     System.out.println("Saving inventory to cvs file...");
-                    DealershipFileManager.saveDealership(dealership);
+//                    DealershipFileManager.saveDealership(dealership);
                     System.out.println("Done. ");
                     System.out.println("Exiting...");
                     break;
@@ -206,7 +212,7 @@ public class UserInterface {
         else if(choice == 2) // lease contract
             contract = new LeaseContract(date, name, email, vehicleSelected);
 
-        ContractDataManager.saveContract(contract);
+//        ContractDataManager.saveContract(contract);
         System.out.println("The following contract is saved: \n" + contract);
         dealership.removeVehicle(vehicleSelected);
     }

@@ -1,8 +1,8 @@
-package com.pluralsight.dealership;
+package com.pluralsight.dealership.models;
 
 import java.time.LocalDate;
 
-public class LeaseContract extends Contract{
+public class LeaseContract extends Contract {
     private double expectedEndingValue;
     private double leaseFee;
 
