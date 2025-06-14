@@ -1,4 +1,4 @@
-package com.ps;
+package com.pluralsight.dealership;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;

@@ -1,4 +1,4 @@
-package com.ps;
+package com.pluralsight.dealership;
 
 import java.time.LocalDate;
 

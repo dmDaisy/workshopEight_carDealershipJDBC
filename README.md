@@ -50,7 +50,7 @@ The application supports several features, users can modify the car list, or sea
 3. Run the application.
 
     ```bash
-    java -cp out com.ps.Main
+    java -cp out com.pluralsight.dealership.Main
     ```
 
 ## Screenshots
