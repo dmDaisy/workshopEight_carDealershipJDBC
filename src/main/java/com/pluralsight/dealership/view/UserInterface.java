@@ -156,7 +156,7 @@ public class UserInterface {
     }
 
     private void processGetAllVehiclesRequest(){
-        displayVehicles(vehicleDAO.getAllVehicles(), "all vehicles");
+        vehicleDAO.getAllVehicles();
     }
 
     private void processAddVehicleRequest(){
