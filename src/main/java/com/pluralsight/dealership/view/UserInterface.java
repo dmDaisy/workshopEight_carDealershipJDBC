@@ -1,24 +1,43 @@
 package com.pluralsight.dealership.view;
 
+import com.pluralsight.dealership.dataManager.DealershipDAO;
+import com.pluralsight.dealership.dataManager.LeaseContractDAO;
+import com.pluralsight.dealership.dataManager.SalesContractDAO;
+import com.pluralsight.dealership.dataManager.VehicleDAO;
 import com.pluralsight.dealership.models.Contract;
 import com.pluralsight.dealership.models.Dealership;
 import com.pluralsight.dealership.models.LeaseContract;
 import com.pluralsight.dealership.models.SalesContract;
 import com.pluralsight.dealership.models.Vehicle;
+import org.apache.commons.dbcp2.BasicDataSource;
 
+import javax.sql.DataSource;
 import java.time.LocalDate;
 import java.util.*;
 
 public class UserInterface {
     private Dealership dealership;
     private final Scanner scanner = new Scanner(System.in);
+    private String SEPARATION_LINE = "------------------------------";
 
-    private void init(){
+    private DataSource dataSource;
+    private VehicleDAO vehicleDAO;
+    private DealershipDAO dealershipDAO;
+    private SalesContractDAO scDAO;
+    private LeaseContractDAO lcDAO;
+
+    private void init(DataSource dataSource){
         // connect to database
+        this.dataSource = dataSource;
+        vehicleDAO = new VehicleDAO(dataSource);
+        dealershipDAO = new DealershipDAO(dataSource);
+        scDAO = new SalesContractDAO(dataSource);
+        lcDAO = new LeaseContractDAO(dataSource);
+
     }
 
-    public UserInterface(){
-        init();
+    public UserInterface(DataSource dataSource){
+        init(dataSource);
     }
 
     public void display(){
@@ -40,7 +59,7 @@ public class UserInterface {
             System.out.println("0. Exit");
 
             System.out.print("Command: ");
-            mainMenuCommand = getUserInt();
+            mainMenuCommand = getIntInput();
 
             switch(mainMenuCommand){
                 case 1:
@@ -74,9 +93,6 @@ public class UserInterface {
                     processBuyOrLeaseRequest();
                     break;
                 case 0:
-                    System.out.println("Saving inventory to cvs file...");
-//                    DealershipFileManager.saveDealership(dealership);
-                    System.out.println("Done. ");
                     System.out.println("Exiting...");
                     break;
                 default:
@@ -96,7 +112,7 @@ public class UserInterface {
         double max = scanner.nextDouble();
 
         // ArrayList<Vehicle> filteredVehicles = dealership.getVehiclesByPrice(startingPrice, endingPrice);
-        ArrayList<Vehicle> filteredVehicles = dealership.vehiclesByPrice(min, max);
+        ArrayList<Vehicle> filteredVehicles = vehicleDAO.getVehiclesByPrice(min, max);
 
         // Display vehicles with for loop
         displayVehicles(filteredVehicles, "price");
@@ -107,7 +123,7 @@ public class UserInterface {
         System.out.println("Enter vehicle model: ");
         String model = scanner.nextLine().trim();
 
-        displayVehicles(dealership.vehiclesByMakeModel(make, model), "make and model");
+        displayVehicles(vehicleDAO.getVehiclesByMakeModel(make, model), "make and model");
     }
     private void processGetByYearRequest(){
         System.out.println("Enter starting year: ");
@@ -117,37 +133,37 @@ public class UserInterface {
         int max = scanner.nextInt();
         scanner.nextLine();
 
-        displayVehicles(dealership.vehiclesByYear(min, max), "year");
+        displayVehicles(vehicleDAO.getVehiclesByYear(min, max), "year");
     }
     private void processGetByColorRequest(){
         System.out.println("Enter color: ");
         String color = scanner.nextLine();
-        displayVehicles(dealership.vehiclesByColor(color), "color");
+        displayVehicles(vehicleDAO.getVehiclesByColor(color), "color");
     }
     private void processGetByMileageRequest(){
         System.out.println("Enter min mileage: ");
-        int min = getUserInt();
+        int min = getIntInput();
         System.out.println("Enter max mileage: ");
-        int max = getUserInt();
+        int max = getIntInput();
 
-        displayVehicles(dealership.vehiclesByMileage(min, max), "mileage");
+        displayVehicles(vehicleDAO.getVehiclesByMileage(min, max), "mileage");
     }
 
     private void processGetByVehicleTypeRequest(){
         System.out.println("Enter type: ");
         String type = scanner.nextLine();
-        displayVehicles(dealership.vehiclesByType(type), "type");
+        displayVehicles(vehicleDAO.getVehiclesByType(type), "type");
     }
 
     private void processGetAllVehiclesRequest(){
-        displayVehicles(dealership.getAllVehicles(), "all vehicles");
+        displayVehicles(vehicleDAO.getAllVehicles(), "all vehicles");
     }
 
     private void processAddVehicleRequest(){
         System.out.println("Enter vehicle VIN: ");
-        int vin = getUserInt();
+        int vin = getIntInput();
         System.out.println("Enter vehicle year: ");
-        int year = getUserInt();
+        int year = getIntInput();
         System.out.println("Enter vehicle make: ");
         String make = scanner.nextLine();
         System.out.println("Enter vehicle model: ");
@@ -157,7 +173,7 @@ public class UserInterface {
         System.out.println("Enter vehicle color: ");
         String color = scanner.nextLine();
         System.out.println("Enter vehicle mileage: ");
-        int mileage = getUserInt();
+        int mileage = getIntInput();
         System.out.println("Enter vehicle price: ");
         double price = scanner.nextDouble();
 
@@ -170,21 +186,21 @@ public class UserInterface {
     // removes by vin only, removes 1 vehicle with each call
     private void processRemoveVehicleRequest(){
         System.out.println("Enter vehicle VIN: ");
-        int vin = getUserInt();
+        int vin = getIntInput();
         System.out.println("The following vehicle is removed: ");
         dealership.removeVehicle(vin);
     }
 
     public void processBuyOrLeaseRequest(){
         System.out.println("Enter VIN of the vehicle you want to buy or lease: ");
-        int vin = getUserInt();
+        int vin = getIntInput();
         Vehicle vehicleSelected = dealership.vehicleByVin(vin);
         if(vehicleSelected == null){
             System.out.println("Invalid VIN, car not found. Going back to main menu...");
             return;
         }
         System.out.println("Enter 1 to buy, enter 2 to lease: ");
-        int choice = getUserInt();
+        int choice = getIntInput();
         if(choice != 1 && choice != 2){
             System.out.println("Invalid choice, going back to main menu...");
             return;
@@ -226,14 +242,24 @@ public class UserInterface {
     }
 
     // helper method to get user int input and consumes redundant \n
-    private int getUserInt(){
+    private int getIntInput(){
         while( ! scanner.hasNextInt()){
             System.out.println("Invalid input, enter an integer: ");
             scanner.nextLine(); // or scanner.next() ?
         }
         int result = scanner.nextInt();
         scanner.nextLine(); // consumes redundant \n, or scanner.next() ?
-
         return result;
+    }
+
+    // helper method to ensure to get an int input between [min, max] inclusively
+    private int getInBoundIntInput(int min, int max){
+        int input = getIntInput();
+        while (input < min || input > max){
+            System.out.println("Input out of bound, try again. ");
+            input = getIntInput();
+        }
+        System.out.println(SEPARATION_LINE);
+        return input;
     }
 }
