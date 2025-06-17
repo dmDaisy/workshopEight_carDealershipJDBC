@@ -111,11 +111,7 @@ public class UserInterface {
         System.out.print("Max: ");
         double max = scanner.nextDouble();
 
-        // ArrayList<Vehicle> filteredVehicles = dealership.getVehiclesByPrice(startingPrice, endingPrice);
-        ArrayList<Vehicle> filteredVehicles = vehicleDAO.getVehiclesByPrice(min, max);
-
-        // Display vehicles with for loop
-        displayVehicles(filteredVehicles, "price");
+        vehicleDAO.getVehiclesByPrice(min, max);
     }
     private void processGetByMakeModelRequest(){
         System.out.println("Enter vehicle make: ");
@@ -123,7 +119,7 @@ public class UserInterface {
         System.out.println("Enter vehicle model: ");
         String model = scanner.nextLine().trim();
 
-        displayVehicles(vehicleDAO.getVehiclesByMakeModel(make, model), "make and model");
+        vehicleDAO.getVehiclesByMakeModel(make, model);
     }
     private void processGetByYearRequest(){
         System.out.println("Enter starting year: ");
@@ -133,12 +129,12 @@ public class UserInterface {
         int max = scanner.nextInt();
         scanner.nextLine();
 
-        displayVehicles(vehicleDAO.getVehiclesByYear(min, max), "year");
+        vehicleDAO.getVehiclesByYear(min, max);
     }
     private void processGetByColorRequest(){
         System.out.println("Enter color: ");
         String color = scanner.nextLine();
-        displayVehicles(vehicleDAO.getVehiclesByColor(color), "color");
+        vehicleDAO.getVehiclesByColor(color);
     }
     private void processGetByMileageRequest(){
         System.out.println("Enter min mileage: ");
@@ -146,13 +142,13 @@ public class UserInterface {
         System.out.println("Enter max mileage: ");
         int max = getIntInput();
 
-        displayVehicles(vehicleDAO.getVehiclesByMileage(min, max), "mileage");
+        vehicleDAO.getVehiclesByMileage(min, max);
     }
 
     private void processGetByVehicleTypeRequest(){
         System.out.println("Enter type: ");
         String type = scanner.nextLine();
-        displayVehicles(vehicleDAO.getVehiclesByType(type), "type");
+        vehicleDAO.getVehiclesByType(type);
     }
 
     private void processGetAllVehiclesRequest(){
@@ -160,8 +156,11 @@ public class UserInterface {
     }
 
     private void processAddVehicleRequest(){
+        System.out.println("Select your dealership, enter 0 to skip:");
+        dealershipDAO.getAllDealerships();
+        int dealershipId = getInBoundIntInput(0, dealershipDAO.getMaxDealershipId());
         System.out.println("Enter vehicle VIN: ");
-        int vin = getIntInput();
+        String vin = scanner.nextLine();
         System.out.println("Enter vehicle year: ");
         int year = getIntInput();
         System.out.println("Enter vehicle make: ");
@@ -177,60 +176,56 @@ public class UserInterface {
         System.out.println("Enter vehicle price: ");
         double price = scanner.nextDouble();
 
-        Vehicle v = new Vehicle(vin, year, make, model, type, color, mileage, price);
-        dealership.addVehicle(v);
-        System.out.println("The following vehicle is added: " +
-                "\n" + v);
+        vehicleDAO.addVehicle(dealershipId, vin, year, make, model, type, color, mileage, price);
     }
 
     // removes by vin only, removes 1 vehicle with each call
     private void processRemoveVehicleRequest(){
         System.out.println("Enter vehicle VIN: ");
-        int vin = getIntInput();
-        System.out.println("The following vehicle is removed: ");
-        dealership.removeVehicle(vin);
+        String vin = scanner.nextLine();
+        vehicleDAO.removeVehicle(vin);
     }
 
     public void processBuyOrLeaseRequest(){
-        System.out.println("Enter VIN of the vehicle you want to buy or lease: ");
-        int vin = getIntInput();
-        Vehicle vehicleSelected = dealership.vehicleByVin(vin);
-        if(vehicleSelected == null){
-            System.out.println("Invalid VIN, car not found. Going back to main menu...");
-            return;
-        }
-        System.out.println("Enter 1 to buy, enter 2 to lease: ");
-        int choice = getIntInput();
-        if(choice != 1 && choice != 2){
-            System.out.println("Invalid choice, going back to main menu...");
-            return;
-        }
-
-        LocalDate date = LocalDate.now();
-        if(choice == 2 && (date.getYear() - vehicleSelected.getYear()) >= 3){ // no cars older than 3 years
-            System.out.println("Cannot lease cars over 3 years old. Going back to home page...");
-            return;
-        }
-        System.out.println("Enter your name: ");
-        String name = scanner.nextLine();
-        System.out.println("Enter your email: ");
-        String email = scanner.nextLine();
-
-        Contract contract = null;
-        if(choice == 1){ // sales contract
-            boolean financed = false;
-            System.out.println("Do you want to pay by month? (Reply Y to confirm)");
-            String s = scanner.nextLine().trim().toUpperCase();
-            if(s.equalsIgnoreCase("Y"))
-                financed = true;
-            contract = new SalesContract(date, name, email, vehicleSelected, financed);
-        }
-        else if(choice == 2) // lease contract
-            contract = new LeaseContract(date, name, email, vehicleSelected);
-
-//        ContractDataManager.saveContract(contract);
-        System.out.println("The following contract is saved: \n" + contract);
-        dealership.removeVehicle(vehicleSelected);
+//        System.out.println("Enter VIN of the vehicle you want to buy or lease: ");
+//        int vin = getIntInput();
+////        Vehicle vehicleSelected = dealership.vehicleByVin(vin);
+//        if(vehicleSelected == null){
+//            System.out.println("Invalid VIN, car not found. Going back to main menu...");
+//            return;
+//        }
+//        System.out.println("Enter 1 to buy, enter 2 to lease: ");
+//        int choice = getIntInput();
+//        if(choice != 1 && choice != 2){
+//            System.out.println("Invalid choice, going back to main menu...");
+//            return;
+//        }
+//
+//        LocalDate date = LocalDate.now();
+//        if(choice == 2 && (date.getYear() - vehicleSelected.getYear()) >= 3){ // no cars older than 3 years
+//            System.out.println("Cannot lease cars over 3 years old. Going back to home page...");
+//            return;
+//        }
+//        System.out.println("Enter your name: ");
+//        String name = scanner.nextLine();
+//        System.out.println("Enter your email: ");
+//        String email = scanner.nextLine();
+//
+//        Contract contract = null;
+//        if(choice == 1){ // sales contract
+//            boolean financed = false;
+//            System.out.println("Do you want to pay by month? (Reply Y to confirm)");
+//            String s = scanner.nextLine().trim().toUpperCase();
+//            if(s.equalsIgnoreCase("Y"))
+//                financed = true;
+//            contract = new SalesContract(date, name, email, vehicleSelected, financed);
+//        }
+//        else if(choice == 2) // lease contract
+//            contract = new LeaseContract(date, name, email, vehicleSelected);
+//
+////        ContractDataManager.saveContract(contract);
+//        System.out.println("The following contract is saved: \n" + contract);
+//        dealership.removeVehicle(vehicleSelected);
     }
 
     // helper method
